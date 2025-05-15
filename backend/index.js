@@ -3,15 +3,15 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-const customerRoutes = require('./routes/customer.routes');
-const productRoutes = require('./routes/product.routes');
-const invoiceRoutes = require('./routes/invoice.routes');
-const { sequelize } = require('./database');
+const customerRoutes = require('./routes/customerRoutes');
+const productRoutes = require('./routes/productRoute');
+const invoiceRoutes = require('./routes/invoiceRoute');
+const { sequelize } = require('./data/database');
 
-require('./models/customer.model');
-require('./models/product.model');
-require('./models/invoice.model');
-require('./models/invoiceItem.model');
+require('./models/customerModel');
+require('./models/productModel');
+require('./models/invoiceModel');
+require('./models/invoiceItemModel');
 
 app.use(cors());
 app.use(express.json());
