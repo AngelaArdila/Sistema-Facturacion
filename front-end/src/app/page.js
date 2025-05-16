@@ -1,15 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import {
   Container, Typography, Stack, Button,
-  Autocomplete, TextField, Table, TableHead,
-  TableBody, TableRow, TableCell, Paper
+  Autocomplete, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 } from '@mui/material';
+import { useEffect, useState } from 'react';
 import api from '../service/apiService';
 import ClienteModal from '../components/modals/ClienteModal';
 import ProductoModal from '../components/modals/ProductoModal';
-import FacturaModal from '../components/modals/FacturaModal';
+import ListaFacturasModal from '../components/modals/ListaFacturaModal';
+import FormularioFactura from '../components/forms/FormularioFactura';
 
 export default function Dashboard() {
   const [clientes, setClientes] = useState([]);
@@ -17,7 +17,7 @@ export default function Dashboard() {
   const [facturas, setFacturas] = useState([]);
   const [openClienteModal, setOpenClienteModal] = useState(false);
   const [openProductoModal, setOpenProductoModal] = useState(false);
-  const [openFacturaModal, setOpenFacturaModal] = useState(false);
+  const [openListaFacturasModal, setOpenListaFacturasModal] = useState(false);
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
 
@@ -25,7 +25,7 @@ export default function Dashboard() {
     api.get('/customers').then(res => setClientes(res.data)).catch(() => setClientes([]));
     api.get('/products').then(res => setProductos(res.data)).catch(() => setProductos([]));
     api.get('/invoices').then(res => setFacturas(res.data)).catch(() => setFacturas([]));
-  }, [openClienteModal, openProductoModal, openFacturaModal]);
+  }, [openClienteModal, openProductoModal]);
 
   const abrirEdicionCliente = (cliente) => {
     setClienteSeleccionado(cliente);
@@ -44,7 +44,7 @@ export default function Dashboard() {
       <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
         <Button variant="contained" onClick={() => { setClienteSeleccionado(null); setOpenClienteModal(true); }}>+ Cliente</Button>
         <Button variant="outlined" onClick={() => { setProductoSeleccionado(null); setOpenProductoModal(true); }}>+ Producto</Button>
-        <Button variant="outlined" onClick={() => setOpenFacturaModal(true)}>+ Factura</Button>
+        <Button variant="outlined" onClick={() => setOpenListaFacturasModal(true)}>📄 Ver Facturas</Button>
       </Stack>
 
       <Autocomplete
@@ -63,33 +63,11 @@ export default function Dashboard() {
         sx={{ mb: 4, width: '100%' }}
       />
 
-      <Typography variant="h6" gutterBottom>Facturas Emitidas</Typography>
-      <Paper elevation={2}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>N°</TableCell>
-              <TableCell>Cliente</TableCell>
-              <TableCell>Fecha</TableCell>
-              <TableCell>Total</TableCell>
-              <TableCell>Acciones</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {facturas.map((f) => (
-              <TableRow key={f.id}>
-                <TableCell>{f.invoiceNumber}</TableCell>
-                <TableCell>{f.Customer?.name || 'Sin cliente'}</TableCell>
-                <TableCell>{new Date(f.date).toLocaleDateString()}</TableCell>
-                <TableCell>${f.total.toFixed(2)}</TableCell>
-                <TableCell>
-                  <Button size="small" variant="outlined">Ver / Imprimir</Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Paper>
+      <FormularioFactura
+        clientes={clientes}
+        productos={productos}
+        onSuccess={() => api.get('/invoices').then(res => setFacturas(res.data))}
+      />
 
       <ClienteModal
         open={openClienteModal}
@@ -103,11 +81,10 @@ export default function Dashboard() {
         productoEditado={productoSeleccionado}
       />
 
-      <FacturaModal
-        open={openFacturaModal}
-        onClose={() => setOpenFacturaModal(false)}
-        clientes={clientes}
-        productos={productos}
+      <ListaFacturasModal
+        open={openListaFacturasModal}
+        onClose={() => setOpenListaFacturasModal(false)}
+        facturas={facturas}
       />
     </Container>
   );
