@@ -1,15 +1,24 @@
-'use client';
+"use client";
 
 import {
-  Container, Typography, Stack, Button,
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
-} from '@mui/material';
-import { useEffect, useState } from 'react';
-import api from '../service/apiService';
-import ClienteModal from '../components/modals/ClienteModal';
-import ProductoModal from '../components/modals/ProductoModal';
-import FacturaDetalleModal from '../components/modals/FacturaDetalleModal';
-import FormularioFactura from '../components/forms/FormularioFactura';
+  Container,
+  Typography,
+  Stack,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@mui/material";
+import { useEffect, useState } from "react";
+import api from "../service/apiService";
+import ClienteModal from "../components/modals/ClienteModal";
+import ProductoModal from "../components/modals/ProductoModal";
+import FacturaDetalleModal from "../components/modals/FacturaDetalleModal";
+import FormularioFactura from "../components/forms/FormularioFactura";
 
 export default function Dashboard() {
   const [clientes, setClientes] = useState([]);
@@ -20,12 +29,21 @@ export default function Dashboard() {
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
   const [facturaSeleccionada, setFacturaSeleccionada] = useState(null);
-  const [vista, setVista] = useState('clientes');
+  const [vista, setVista] = useState("clientes");
 
   useEffect(() => {
-    api.get('/customers').then(res => setClientes(res.data)).catch(() => setClientes([]));
-    api.get('/products').then(res => setProductos(res.data)).catch(() => setProductos([]));
-    api.get('/invoices').then(res => setFacturas(res.data)).catch(() => setFacturas([]));
+    api
+      .get("/customers")
+      .then((res) => setClientes(res.data))
+      .catch(() => setClientes([]));
+    api
+      .get("/products")
+      .then((res) => setProductos(res.data))
+      .catch(() => setProductos([]));
+    api
+      .get("/invoices")
+      .then((res) => setFacturas(res.data))
+      .catch(() => setFacturas([]));
   }, [openClienteModal, openProductoModal]);
 
   const abrirEdicionCliente = (cliente) => {
@@ -38,8 +56,13 @@ export default function Dashboard() {
     setOpenProductoModal(true);
   };
 
-  const abrirDetalleFactura = (factura) => {
-    setFacturaSeleccionada(factura);
+  const abrirDetalleFactura = async (facturaResumen) => {
+    try {
+      const res = await api.get(`/invoices/${facturaResumen.id}`);
+      setFacturaSeleccionada(res.data);
+    } catch (err) {
+      console.error("Error al cargar detalles de la factura:", err);
+    }
   };
 
   const cerrarDetalleFactura = () => {
@@ -48,28 +71,63 @@ export default function Dashboard() {
 
   return (
     <Container sx={{ mt: 4 }}>
-      <Typography variant="h4" gutterBottom fontWeight="bold">Sistema de Facturación</Typography>
+      <Typography variant="h4" gutterBottom fontWeight="bold">
+        Sistema de Facturación
+      </Typography>
 
       <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
-        <Button variant={vista === 'factura' ? 'contained' : 'outlined'} onClick={() => setVista('factura')}>Nueva Factura</Button>
-        <Button variant={vista === 'clientes' ? 'contained' : 'outlined'} onClick={() => setVista('clientes')}>Clientes</Button>
-        <Button variant={vista === 'productos' ? 'contained' : 'outlined'} onClick={() => setVista('productos')}>Productos</Button>
-        
-        <Button variant={vista === 'facturas' ? 'contained' : 'outlined'} onClick={() => setVista('facturas')}>📄 Facturas</Button>
+        <Button
+          variant={vista === "factura" ? "contained" : "outlined"}
+          onClick={() => setVista("factura")}
+        >
+          Nueva Factura
+        </Button>
+        <Button
+          variant={vista === "clientes" ? "contained" : "outlined"}
+          onClick={() => setVista("clientes")}
+        >
+          Clientes
+        </Button>
+        <Button
+          variant={vista === "productos" ? "contained" : "outlined"}
+          onClick={() => setVista("productos")}
+        >
+          Productos
+        </Button>
+        <Button
+          variant={vista === "facturas" ? "contained" : "outlined"}
+          onClick={() => setVista("facturas")}
+        >
+          📄 Facturas
+        </Button>
       </Stack>
-      {vista === 'factura' && (
+
+      {vista === "factura" && (
         <FormularioFactura
           clientes={clientes}
           productos={productos}
           mostrarPrecio
-
-          onSuccess={() => api.get('/invoices').then(res => setFacturas(res.data))}
+          onSuccess={() =>
+            api.get("/invoices").then((res) => setFacturas(res.data))
+          }
         />
       )}
-      {vista === 'clientes' && (
+
+      {vista === "clientes" && (
         <>
-          <Button variant="contained" sx={{ mb: 2 }} onClick={() => { setClienteSeleccionado(null); setOpenClienteModal(true); }}>+ Nuevo Cliente</Button>
-          <Typography variant="h6" gutterBottom>Clientes Registrados</Typography>
+          <Button
+            variant="contained"
+            sx={{ mb: 2 }}
+            onClick={() => {
+              setClienteSeleccionado(null);
+              setOpenClienteModal(true);
+            }}
+          >
+            + Nuevo Cliente
+          </Button>
+          <Typography variant="h6" gutterBottom>
+            Clientes Registrados
+          </Typography>
           <TableContainer component={Paper} sx={{ mb: 4 }}>
             <Table size="small">
               <TableHead>
@@ -87,7 +145,12 @@ export default function Dashboard() {
                     <TableCell>{c.address}</TableCell>
                     <TableCell>{c.phone}</TableCell>
                     <TableCell>
-                      <Button size="small" onClick={() => abrirEdicionCliente(c)}>Editar</Button>
+                      <Button
+                        size="small"
+                        onClick={() => abrirEdicionCliente(c)}
+                      >
+                        Editar
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -97,10 +160,21 @@ export default function Dashboard() {
         </>
       )}
 
-      {vista === 'productos' && (
+      {vista === "productos" && (
         <>
-          <Button variant="contained" sx={{ mb: 2 }} onClick={() => { setProductoSeleccionado(null); setOpenProductoModal(true); }}>+ Nuevo Producto</Button>
-          <Typography variant="h6" gutterBottom>Productos Registrados</Typography>
+          <Button
+            variant="contained"
+            sx={{ mb: 2 }}
+            onClick={() => {
+              setProductoSeleccionado(null);
+              setOpenProductoModal(true);
+            }}
+          >
+            + Nuevo Producto
+          </Button>
+          <Typography variant="h6" gutterBottom>
+            Productos Registrados
+          </Typography>
           <TableContainer component={Paper} sx={{ mb: 4 }}>
             <Table size="small">
               <TableHead>
@@ -118,7 +192,12 @@ export default function Dashboard() {
                     <TableCell>{p.description}</TableCell>
                     <TableCell>${p.price}</TableCell>
                     <TableCell>
-                      <Button size="small" onClick={() => abrirEdicionProducto(p)}>Editar</Button>
+                      <Button
+                        size="small"
+                        onClick={() => abrirEdicionProducto(p)}
+                      >
+                        Editar
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -128,11 +207,11 @@ export default function Dashboard() {
         </>
       )}
 
-
-
-      {vista === 'facturas' && (
+      {vista === "facturas" && (
         <>
-          <Typography variant="h6" gutterBottom>Facturas Emitidas</Typography>
+          <Typography variant="h6" gutterBottom>
+            Facturas Emitidas
+          </Typography>
           <TableContainer component={Paper} sx={{ mb: 4 }}>
             <Table size="small">
               <TableHead>
@@ -148,11 +227,20 @@ export default function Dashboard() {
                 {facturas.map((f) => (
                   <TableRow key={f.id}>
                     <TableCell>{f.invoiceNumber}</TableCell>
-                    <TableCell>{clientes.find((c) => c.id === f.customerId)?.name || 'Sin cliente'}</TableCell>
-                    <TableCell>{new Date(f.date).toLocaleDateString()}</TableCell>
+                    <TableCell>{f.customers?.name || "Sin cliente"}</TableCell>
+
+                    <TableCell>
+                      {new Date(f.date).toLocaleDateString()}
+                    </TableCell>
                     <TableCell>${f.total.toFixed(2)}</TableCell>
                     <TableCell>
-                      <Button size="small" variant="outlined" onClick={() => abrirDetalleFactura(f)}>Ver / Imprimir</Button>
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={() => abrirDetalleFactura(f)}
+                      >
+                        Ver / Imprimir
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}

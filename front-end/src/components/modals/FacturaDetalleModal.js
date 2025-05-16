@@ -6,16 +6,13 @@ import {
 } from '@mui/material';
 
 export default function FacturaDetalleModal({ open, onClose, factura }) {
-  if (!factura) return null;
+  if (!open || !factura) return null;
 
   const { invoiceNumber, date, total, Customer, InvoiceItems = [] } = factura;
-
   const subtotal = +(total / 1.15).toFixed(2);
   const tax = +(total - subtotal).toFixed(2);
 
-  const handlePrint = () => {
-    window.print();
-  };
+  const handlePrint = () => window.print();
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
@@ -38,14 +35,21 @@ export default function FacturaDetalleModal({ open, onClose, factura }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {InvoiceItems.map((item, i) => (
-              <TableRow key={i}>
-                <TableCell>{item.Product?.name || '-'}</TableCell>
-                <TableCell align="right">${item.Product?.price?.toFixed(2)}</TableCell>
-                <TableCell align="right">{item.quantity}</TableCell>
-                <TableCell align="right">${item.total?.toFixed(2)}</TableCell>
-              </TableRow>
-            ))}
+            {InvoiceItems.map((item, i) => {
+              const producto = item.Product;
+              return (
+                <TableRow key={i}>
+                  <TableCell>{producto?.name || 'Producto no encontrado'}</TableCell>
+                  <TableCell align="right">
+                    {producto?.price !== undefined ? `$${producto.price.toFixed(2)}` : '$'}
+                  </TableCell>
+                  <TableCell align="right">{item.quantity}</TableCell>
+                  <TableCell align="right">
+                    {item.total !== undefined ? `$${item.total.toFixed(2)}` : '$'}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
             <TableRow>
               <TableCell rowSpan={3} />
               <TableCell colSpan={2}>Subtotal</TableCell>

@@ -1,7 +1,12 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../data/database');
+const { DataTypes } = require("sequelize");
+const { sequelize } = require("../data/database");
 
-const Customer = sequelize.define('Customer', {
+const Customer = sequelize.define("Customer", {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
   name: {
     type: DataTypes.STRING,
     allowNull: false,

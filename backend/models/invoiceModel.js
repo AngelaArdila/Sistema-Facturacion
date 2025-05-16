@@ -3,6 +3,11 @@ const { sequelize } = require('../data/database');
 const Customer = require('./customerModel');
 
 const Invoice = sequelize.define('Invoice', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
   invoiceNumber: {
     type: DataTypes.STRING,
     unique: true,

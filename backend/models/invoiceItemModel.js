@@ -4,6 +4,11 @@ const Invoice = require('./invoiceModel');
 const Product = require('./productModel');
 
 const InvoiceItem = sequelize.define('InvoiceItem', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
   quantity: {
     type: DataTypes.INTEGER,
     allowNull: false,

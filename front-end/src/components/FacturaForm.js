@@ -6,7 +6,7 @@ const FacturaForm = () => {
   const [clientes, setClientes] = useState([]);
   const [productos, setProductos] = useState([]);
   const [clienteId, setClienteId] = useState('');
-  const [item, setItem] = useState({ productId: '', quantity: '' });
+  const [item, setItem] = useState({ clienteId:'',productId: '', quantity: '' });
   const [items, setItems] = useState([]);
   const [mensaje, setMensaje] = useState('');
   const [error, setError] = useState('');

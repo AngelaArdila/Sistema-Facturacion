@@ -8,6 +8,7 @@ const createInvoice = async (req, res) => {
     }
 
     const invoice = await invoiceService.createInvoice({ customerId, items });
+    console.log(invoice);
     res.status(201).json(invoice);
   } catch (err) {
     console.error('Error al crear factura:', err);
