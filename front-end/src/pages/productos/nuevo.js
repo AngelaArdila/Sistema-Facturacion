@@ -1,5 +1,5 @@
-import ProductForm from '../../components/ProductForm';
+import ClienteForm from '../../components/ClienteForm';
 
-export default function NuevoProducto() {
-  return <ProductForm />;
+export default function NuevoCliente() {
+  return <ClienteForm />;
 }
