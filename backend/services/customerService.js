@@ -1,4 +1,4 @@
-const Customer = require('../models/customerModel');
+const { Customer } = require("../data/database");
 
 const createCustomer = async (data) => {
   return await Customer.create(data);

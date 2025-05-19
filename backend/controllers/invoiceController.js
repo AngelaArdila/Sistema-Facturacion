@@ -8,7 +8,7 @@ const createInvoice = async (req, res) => {
     }
 
     const invoice = await invoiceService.createInvoice({ customerId, items });
-    console.log(invoice);
+
     res.status(201).json(invoice);
   } catch (err) {
     console.error('Error al crear factura:', err);
@@ -21,7 +21,7 @@ const getAllInvoices = async (req, res) => {
     const invoices = await invoiceService.getAllInvoices();
     res.json(invoices);
   } catch (err) {
-    res.status(500).json({ error: 'Error al obtener facturas' });
+    res.status(500).json({ error: 'Error al obtener facturas', err });
   }
 };
 
@@ -31,7 +31,7 @@ const getInvoiceById = async (req, res) => {
     if (!invoice) return res.status(404).json({ error: 'Factura no encontrada' });
     res.json(invoice);
   } catch (err) {
-    res.status(500).json({ error: 'Error al obtener factura' });
+    res.status(500).json({ error: 'Error al obtener factura', err });
   }
 };
 

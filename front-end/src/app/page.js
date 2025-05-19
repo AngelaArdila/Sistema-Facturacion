@@ -29,7 +29,7 @@ export default function Dashboard() {
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
   const [facturaSeleccionada, setFacturaSeleccionada] = useState(null);
-  const [vista, setVista] = useState("clientes");
+  const [vista, setVista] = useState("factura");
 
   useEffect(() => {
     api
@@ -227,7 +227,7 @@ export default function Dashboard() {
                 {facturas.map((f) => (
                   <TableRow key={f.id}>
                     <TableCell>{f.invoiceNumber}</TableCell>
-                    <TableCell>{f.customers?.name || "Sin cliente"}</TableCell>
+                    <TableCell>{f.customer?.name || "Sin cliente"}</TableCell>
 
                     <TableCell>
                       {new Date(f.date).toLocaleDateString()}

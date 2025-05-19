@@ -1,8 +1,4 @@
-const Invoice = require("../models/invoiceModel");
-const InvoiceItem = require("../models/invoiceItemModel");
-const Product = require("../models/productModel");
-const Customer = require("../models/customerModel");
-const { Op } = require("sequelize");
+const { Customer, InvoiceItem, Invoice, Product } = require("../data/database");
 
 const generateInvoiceNumber = async () => {
   const count = await Invoice.count();
@@ -25,7 +21,7 @@ const createInvoice = async ({ customerId, items }) => {
     subtotal += totalPrice;
 
     invoiceItems.push({
-      productId: item.productId,
+      ProductId: item.productId,
       quantity: item.quantity,
       totalPrice,
     });
@@ -38,30 +34,51 @@ const createInvoice = async ({ customerId, items }) => {
   const invoice = await Invoice.create(
     {
       invoiceNumber,
-      customerId,
+      CustomerId: customerId,
       subtotal,
       tax,
       total,
-      InvoiceItems: invoiceItems,
+      invoiceItems,
     },
     {
-      include: [{ model: InvoiceItem }],
+      include: [
+        {
+          model: InvoiceItem,
+          as: "invoiceItems",
+        },
+      ],
     }
   );
   const savedInvoice = await getInvoiceById(invoice.id);
+
   return savedInvoice;
 };
 
 const getAllInvoices = async () => {
   return await Invoice.findAll({
-    include: [{ model: Customer }, { model: InvoiceItem, include: [Product] }],
+    include: [
+      {
+        model: Customer,
+        as: "customer",
+      },
+    ],
     order: [["createdAt", "DESC"]],
   });
 };
 
 const getInvoiceById = async (id) => {
   return await Invoice.findByPk(id, {
-    include: [{ model: Customer }, { model: InvoiceItem, include: [Product] }],
+    include: [
+      {
+        model: Customer,
+        as: "customer",
+      },
+      {
+        model: InvoiceItem,
+        as: "invoiceItems",
+        include: [{ model: Product, as: "product" }],
+      },
+    ],
   });
 };
 

@@ -3,6 +3,7 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+
 const customerRoutes = require('./routes/customerRoutes');
 const productRoutes = require('./routes/productRoute');
 const invoiceRoutes = require('./routes/invoiceRoute');
